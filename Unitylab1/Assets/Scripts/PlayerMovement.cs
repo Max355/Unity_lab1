@@ -4,30 +4,36 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-      public float movementSpeed = 0.5f;
-    public float jumpHeight = 0.5f;
-
+    [SerializeField] float movementSpeed = 5f;
+    [SerializeField] float jumpHeight = 5f;
+    CircleCollider2D circleCollider;
     Rigidbody2D rbody;
 
-    // Start is called before the first frame update
+
     void Start()
     {
-         rbody = GetComponent<Rigidbody2D>();
+        rbody = GetComponent<Rigidbody2D>();
+        circleCollider = GetComponent<CircleCollider2D>();
     }
 
     private void FixedUpdate()
     {
         float horizontalInput = Input.GetAxis("Horizontal");
         Vector2 movementVector = new Vector2(horizontalInput * movementSpeed * 100 * Time.deltaTime, rbody.velocity.y);   
+        Debug.Log(Time.deltaTime);
         rbody.velocity = movementVector;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Jump"))
+        
+    if(!circleCollider.IsTouchingLayers(LayerMask.GetMask("Ground")))
         {
-            movementSpeed = jumpHeight;
+          return;
+        }
+    if (Input.GetButtonDown("Jump"))
+        {
+           rbody.AddForce(Vector2.up * jumpHeight, ForceMode2D.Impulse);
         }
     }
 }
